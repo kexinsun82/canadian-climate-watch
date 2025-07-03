@@ -1,0 +1,2 @@
+# canadian-climate-watch
+Climate Watch Canada is a weather observation-based website designed to empower Canadian residents, community organizers and environmental researchers to monitor and respond to climate change. Built on a full-stack framework, the application integrates real-time official data with community-generated reports to raise awareness, promote preparedness and visualize environmental change.
