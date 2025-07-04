@@ -11,10 +11,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/discussion/page": [
+    "/api/getObservations/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/discussion/page.js"
+      "static/chunks/app/api/getObservations/route.js"
     ]
   }
 }

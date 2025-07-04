@@ -20,6 +20,7 @@
   "app/page.js -> @/components/MapSection": {
     "id": "app/page.js -> @/components/MapSection",
     "files": [
+      "static/css/_app-pages-browser_src_components_MapSection_js.css",
       "static/chunks/_app-pages-browser_src_components_MapSection_js.js"
     ]
   }
