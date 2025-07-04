@@ -5,10 +5,15 @@
         "app/page": {
           "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
           "async": false
+        },
+        "app/_not-found/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
         }
       },
       "layer": {
-        "app/page": "rsc"
+        "app/page": "rsc",
+        "app/_not-found/page": "rsc"
       }
     },
     "7f76c446fc5c1b5f96f51829cfc04b60cc95af5e81": {
@@ -16,10 +21,15 @@
         "app/page": {
           "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
           "async": false
+        },
+        "app/_not-found/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
         }
       },
       "layer": {
-        "app/page": "rsc"
+        "app/page": "rsc",
+        "app/_not-found/page": "rsc"
       }
     },
     "7fd8a9e62434241d658d1bdc6268469bc9d0efac4e": {
@@ -27,10 +37,15 @@
         "app/page": {
           "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
           "async": false
+        },
+        "app/_not-found/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f244f808d8c16d159a108e7a3dae46edcfeec745e%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f76c446fc5c1b5f96f51829cfc04b60cc95af5e81%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fd8a9e62434241d658d1bdc6268469bc9d0efac4e%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
         }
       },
       "layer": {
-        "app/page": "rsc"
+        "app/page": "rsc",
+        "app/_not-found/page": "rsc"
       }
     },
     "7f1c67df89acafd42553b6c9ad2a681403023da22e": {
@@ -38,10 +53,15 @@
         "app/page": {
           "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227f1c67df89acafd42553b6c9ad2a681403023da22e%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
+        },
+        "app/_not-found/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fkellysun%2FDesktop%2Fcapstone%2Fcanadian-climate-watch%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227f1c67df89acafd42553b6c9ad2a681403023da22e%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
         }
       },
       "layer": {
-        "app/page": "action-browser"
+        "app/page": "action-browser",
+        "app/_not-found/page": "action-browser"
       }
     }
   },

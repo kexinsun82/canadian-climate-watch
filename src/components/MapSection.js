@@ -19,36 +19,51 @@ export default function MapSection() {
 
   useEffect(() => {
     if (selected !== 'eccc') {
+      setAlertMarkers([]);
       setObservationMarkers([]);
       return;
     }
-
+  
     fetch('/api/getObservations')
       .then(res => res.text())
       .then(xmlStr => {
         const parser = new window.DOMParser();
         const xml = parser.parseFromString(xmlStr, 'application/xml');
         const members = Array.from(xml.getElementsByTagName('om:member'));
+
         const markers = members.map(member => {
-          const posTag = member.getElementsByTagName('gml:pos')[0];
-          const elements = member.getElementsByTagName('element');
-          let station = '', time = '';
-          if (posTag) {
-            const [lat, lng] = posTag.textContent.split(' ').map(Number);
-            Array.from(elements).forEach(el => {
+          const metaElements = member.getElementsByTagName('element');
+          let station = '', lat = null, lng = null, time = '';
+          
+          Array.from(metaElements).forEach(el => {
+            const name = el.getAttribute('name');
+            const value = el.getAttribute('value');
+            if (name === 'station_name') station = value;
+            if (name === 'latitude') lat = parseFloat(value);
+            if (name === 'longitude') lng = parseFloat(value);
+            if (name === 'observation_date_utc') time = value;
+          });
+
+          const resultElements = member.getElementsByTagName('om:result')[0];
+          let highTemp = '', lowTemp = '', windDir = '';
+          if (resultElements) {
+            const resEls = resultElements.getElementsByTagName('element');
+            Array.from(resEls).forEach(el => {
               const name = el.getAttribute('name');
               const value = el.getAttribute('value');
-              if (name === 'station_name') station = value;
-              if (name === 'observation_date_utc') time = value;
+              if (name === 'air_temperature_today_high') highTemp = value;
+              if (name === 'air_temperature_today_low') lowTemp = value;
+              if (name === 'wind_direction') windDir = value;
             });
-            return station && lat && lng ? { station, lat, lng, time } : null;
           }
-          return null;
+
+          return station && lat && lng ? { station, lat, lng, time, highTemp, lowTemp, windDir } : null;
         }).filter(Boolean);
+
         setObservationMarkers(markers);
       })
       .catch(() => setObservationMarkers([]));
-
+  
   }, [selected]);
 
   return (
@@ -108,7 +123,10 @@ export default function MapSection() {
                     <Popup>
                       <div>
                         <div><b>{marker.station}</b></div>
-                        <div>{marker.time}</div>
+                        <div>Observed: {marker.time}</div>
+                        {marker.highTemp && <div>High: {marker.highTemp} °C</div>}
+                        {marker.lowTemp && <div>Low: {marker.lowTemp} °C</div>}
+                        {marker.windDir && <div>Wind: {marker.windDir}</div>}
                       </div>
                     </Popup>
                   </Marker>
@@ -124,7 +142,10 @@ export default function MapSection() {
                   <Popup>
                     <div>
                       <div><b>{marker.station}</b></div>
-                      <div>{marker.time}</div>
+                      <div>Observed: {marker.time}</div>
+                      {marker.highTemp && <div>High: {marker.highTemp} °C</div>}
+                      {marker.lowTemp && <div>Low: {marker.lowTemp} °C</div>}
+                      {marker.windDir && <div>Wind: {marker.windDir}</div>}
                     </div>
                   </Popup>
                 </Marker>
