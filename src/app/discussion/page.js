@@ -38,7 +38,7 @@ export default function DiscussionPage() {
         ))}
       </div>
       <div className="w-full max-w-3xl">
-        <DiscussionSection filter={selected} />
+        <DiscussionSection filter={selected} hideHeader={true} />
       </div>
     </div>
   );

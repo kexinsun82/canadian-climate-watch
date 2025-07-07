@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const dbUrl = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPWD}@${process.env.DB_HOST}/${process.env.DB_NAME}?${process.env.DB_OPTIONS}`;
+const dbUrl = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPWD}@${process.env.DB_HOST}/${process.env.DB_NAME}`;
 
 const options = {
   useNewUrlParser: true,
@@ -15,8 +15,9 @@ export async function connectToDatabase() {
     return cachedClient;
   }
 
+  console.log("MongoDB URL:", dbUrl);
+
   const client = new MongoClient(dbUrl, options);
-  
   try {
     await client.connect();
     console.log('Successfully connected to MongoDB');
