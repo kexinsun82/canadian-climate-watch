@@ -1,23 +1,24 @@
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { withAuth } from '@clerk/nextjs/server';
 
-export default function AdminPage() {
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
+export default withAuth((req, res, next) => {
+  const { userId, session, user } = req.auth;
+  const roles = user?.publicMetadata?.roles || [];
 
-  useEffect(() => {
-    if (isLoaded && !user?.publicMetadata?.roles?.includes('admin')) {
-      router.push('/'); 
-    }
-  }, [isLoaded, user, router]);
+  const url = req.nextUrl.pathname;
 
-  if (!isLoaded) return null;
-  if (!user?.publicMetadata?.roles?.includes('admin')) return null;
+  if (url.startsWith('/admin') && !roles.includes('admin')) {
+    return Response.redirect(new URL('/', req.url));
+  }
+  if ((url.startsWith('/reports') || url.startsWith('/profile')) && !(roles.includes('member') || roles.includes('admin'))) {
+    return Response.redirect(new URL('/sign-in', req.url));
+  }
+  return next();
+});
 
-  return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">Admin</h1>
-    </main>
-  );
-} 
+export const config = {
+  matcher: [
+    '/admin/:path*',
+    '/reports/:path*',
+    '/profile/:path*',
+  ],
+}; 

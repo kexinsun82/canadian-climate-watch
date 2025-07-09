@@ -14,12 +14,11 @@ export default function DiscussionPage() {
   const [selected, setSelected] = useState('realtime');
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center px-4 py-8" style={{ background: '#FEF8EA' }}>
+    <div className="min-h-screen w-full flex flex-col items-center px-4 py-8 bg-[var(--color-card)]">
       <div className="w-full max-w-3xl flex items-center justify-between mb-8">
-        <span className="text-2xl font-medium" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>Discussion</span>
+        <span className="text-2xl font-medium font-title">Discussion</span>
         <button
-          className="px-6 py-2 rounded-full bg-[#D40808] text-[#FFFFFE] text-base font-medium transition hover:opacity-90"
-          style={{ fontFamily: 'Poppins, sans-serif' }}
+          className="px-6 py-2 rounded-full bg-[var(--color-accent)] text-[var(--color-white)] text-base font-medium transition hover:opacity-90 font-body"
           onClick={() => router.push('/report')}
         >
           Report Now
@@ -29,8 +28,7 @@ export default function DiscussionPage() {
         {filterTabs.map(tab => (
           <button
             key={tab.key}
-            className={`px-6 py-2 rounded-full border font-medium transition text-base ${selected === tab.key ? 'bg-[#F7B52C] text-black' : 'bg-transparent text-black hover:bg-[#FDE8BE]'}`}
-            style={{ fontFamily: 'Poppins, sans-serif' }}
+            className={`px-6 py-2 rounded-full border font-medium transition text-base font-body ${selected === tab.key ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'}`}
             onClick={() => setSelected(tab.key)}
           >
             {tab.label}

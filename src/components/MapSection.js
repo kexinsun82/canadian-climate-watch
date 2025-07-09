@@ -151,14 +151,9 @@ export default function MapSection() {
 
   return (
     <section className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between bg-[#FDE8BE] rounded-full px-6 py-3">
-        <span className="text-lg font-medium" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>
-          Interactive Map
-        </span>
-        <button
-          className="bg-[#FDE8BE] rounded-full px-4 py-1 font-medium border border-[#F7B52C] hover:bg-[#F7B52C] transition"
-          style={{ fontFamily: 'Poppins, sans-serif' }}
-        >
+      <div className="flex items-center justify-between bg-[var(--color-primary-light)] rounded-full px-6 py-3">
+        <span className="text-lg font-medium font-title">Interactive Map</span>
+        <button className="bg-[var(--color-primary-light)] rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary)] transition font-body">
           Filters
         </button>
       </div>
@@ -167,10 +162,7 @@ export default function MapSection() {
         {mapTabs.map(tab => (
           <button
             key={tab.key}
-            className={`px-6 py-2 rounded-full border font-medium transition text-base ${
-              selected === tab.key ? 'bg-[#F7B52C] text-black' : 'bg-transparent text-black hover:bg-[#FDE8BE]'
-            }`}
-            style={{ fontFamily: 'Poppins, sans-serif' }}
+            className={`px-6 py-2 rounded-full border font-medium transition text-base font-body ${selected === tab.key ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'}`}
             onClick={() => setSelected(tab.key)}
           >
             {tab.label}
@@ -249,9 +241,9 @@ export default function MapSection() {
             </MarkerClusterGroup>
           </MapContainer>
         ) : (
-          <span className="text-gray-500">{selected.toUpperCase()} Leaflet Map</span>
+        <span className="text-gray-500">{selected.toUpperCase()} Leaflet Map</span>
         )}
       </div>
     </section>
   );
-}
+} 

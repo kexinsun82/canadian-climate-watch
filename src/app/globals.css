@@ -5,6 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-primary: #F7B52C;
+  --color-primary-light: #FDE8BE;
+  --color-accent: #D40808;
+  --color-card: #FEF8EA;
+  --color-white: #FFFFFE;
 }
 
 @theme inline {
