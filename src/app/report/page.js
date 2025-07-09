@@ -43,7 +43,7 @@ function LocationPicker({ value, onChange }) {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 items-center">
       <MapContainer
         center={position || [49.25, -85.32]}
         zoom={position ? 10 : 4}
@@ -57,12 +57,12 @@ function LocationPicker({ value, onChange }) {
         <LocationMarker />
       </MapContainer>
       <button
-        className="mt-2 px-4 py-2 bg-[#F7B52C] text-black rounded-full font-medium w-max self-end"
+        className="mt-2 px-4 py-2 bg-[var(--color-primary)] text-black rounded-full font-medium w-max"
         style={{ fontFamily: 'Poppins, sans-serif' }}
         onClick={handleLocate}
         type="button"
       >
-        Use My Location
+        Use Current Location
       </button>
     </div>
   );
@@ -133,73 +133,74 @@ export default function ReportPage() {
         </div>
         <span className="text-lg font-medium font-title text-[#222]">Information</span>
       </div>
-      <form className="w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-6 flex flex-col gap-4 mb-8" onSubmit={handleSubmit}>
-        <div className="flex items-center justify-between">
-          <span className="text-base font-medium font-title">Label</span>
-          <button
-            type="button"
-            className="px-3 py-1 rounded-full bg-[var(--color-primary)] text-black font-medium text-sm font-body"
-            onClick={() => setShowCustomInput(v => !v)}
-          >
-            {showCustomInput ? 'Cancel' : 'Custom Label'}
-          </button>
-        </div>
-        {!showCustomInput ? (
-          <div className="flex flex-wrap gap-3">
-            {LABEL_OPTIONS.map(opt => (
-              <button
-                key={opt}
-                type="button"
-                className={`px-5 py-2 rounded-full font-medium text-sm transition ${label === opt ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-card)]'} text-black font-body`}
-                style={{ borderRadius: 100 }}
-                onClick={() => setLabel(opt)}
-              >
-                {opt}
-              </button>
-            ))}
+      <form onSubmit={handleSubmit}>
+        <div className='w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-6 flex flex-col gap-4 mb-8'>
+          <div className="flex items-center justify-between">
+            <span className="text-base font-medium font-title">Label</span>
+            <button
+              type="button"
+              className="px-3 py-1 rounded-full bg-[var(--color-primary)] text-black font-medium text-sm font-body"
+              onClick={() => setShowCustomInput(v => !v)}
+            >
+              {showCustomInput ? 'Cancel' : 'Custom Label'}
+            </button>
           </div>
-        ) : (
-          <input
-            className="w-full px-4 py-2 rounded-full bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
-            placeholder="Enter custom label"
-            value={customLabel}
-            onChange={e => setCustomLabel(e.target.value)}
+          {!showCustomInput ? (
+            <div className="flex flex-wrap gap-3">
+              {LABEL_OPTIONS.map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  className={`px-5 py-2 rounded-full font-medium text-sm transition ${label === opt ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-card)]'} text-black font-body`}
+                  style={{ borderRadius: 100 }}
+                  onClick={() => setLabel(opt)}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <input
+              className="w-full px-4 py-2 rounded-full bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
+              placeholder="Enter custom label"
+              value={customLabel}
+              onChange={e => setCustomLabel(e.target.value)}
+            />
+          )}
+          <span className="text-base font-medium font-title">Level</span>
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={0}
+              max={4}
+              value={level}
+              onChange={e => setLevel(Number(e.target.value))}
+              className="flex-1 accent-[var(--color-primary)]"
+            />
+          </div>
+          <div className="flex justify-between px-2">
+            <span className="text-xs font-body">Nice</span>
+            <span className="text-xs font-body">Low</span>
+            <span className="text-xs font-body">Medium</span>
+            <span className="text-xs font-body">High</span>
+            <span className="text-xs font-body">Extreme</span>
+          </div>
+          <span className="text-base font-medium font-title">Notes</span>
+          <textarea
+            className="w-full min-h-[80px] rounded-xl bg-[var(--color-card)] px-4 py-2 text-black text-sm outline-none font-body"
+            placeholder="Describe the situation..."
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
           />
-        )}
-        <span className="text-base font-medium font-title">Level</span>
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-body">Nice</span>
-          <input
-            type="range"
-            min={0}
-            max={4}
-            value={level}
-            onChange={e => setLevel(Number(e.target.value))}
-            className="flex-1 accent-[var(--color-primary)]"
-          />
-          <span className="text-xs font-body">Extreme</span>
         </div>
-        <div className="flex justify-between px-2">
-          <span className="text-xs font-body">Nice</span>
-          <span className="text-xs font-body">Low</span>
-          <span className="text-xs font-body">Medium</span>
-          <span className="text-xs font-body">High</span>
-          <span className="text-xs font-body">Extreme</span>
-        </div>
-        <span className="text-base font-medium font-title">Notes</span>
-        <textarea
-          className="w-full min-h-[80px] rounded-xl bg-[var(--color-card)] px-4 py-2 text-black text-sm outline-none font-body"
-          placeholder="Describe the situation..."
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-        />
-        <div className="flex flex-col items-center gap-4 mt-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]" style={{ minWidth: 32, minHeight: 32 }}>
+        <div className="relative flex justify-center mt-2">
+          <div className="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]" 
+              style={{ minWidth: 32, minHeight: 32 }}>
             <span className="text-lg font-medium text-black font-title">3</span>
           </div>
           <button
             type="submit"
-            className="mt-2 px-8 py-2 bg-[var(--color-accent)] text-[var(--color-white)] rounded-full font-medium text-lg transition hover:opacity-90 font-body"
+            className="px-8 py-2 bg-[var(--color-accent)] text-[var(--color-white)] rounded-full font-medium text-lg transition hover:opacity-90 font-body"
             disabled={submitting || !location || !(label || customLabel)}
           >
             {submitting ? 'Submitting...' : 'Submit'}
