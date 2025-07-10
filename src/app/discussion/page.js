@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import DiscussionSection from '@/components/DiscussionSection';
+import DiscussionSection from '../../components/DiscussionSection';
 
 const filterTabs = [
   { key: 'realtime', label: 'Real-time' },

@@ -161,7 +161,7 @@ export default function ReportPage() {
             </div>
           ) : (
             <input
-              className="w-full px-4 py-2 rounded-full bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
+              className="w-full px-4 py-2 rounded-2xl bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
               placeholder="Enter custom label"
               value={customLabel}
               onChange={e => setCustomLabel(e.target.value)}

@@ -1,8 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import MenuNavigation from '@/components/MenuNavigation';
-import MenuFooter from '@/components/MenuFooter';
+import { ClerkProvider } from "@clerk/nextjs";
+import MenuNavigation from '../components/MenuNavigation';
+import MenuFooter from '../components/MenuFooter';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,9 +21,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider afterSignInUrl="/">
+    <ClerkProvider>
       <html lang="en">
-        <body>
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
           <main>
             <MenuNavigation />
             {children}

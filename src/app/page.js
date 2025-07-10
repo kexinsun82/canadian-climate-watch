@@ -1,11 +1,11 @@
 "use client";
-import MenuNavigation from '@/components/MenuNavigation';
-import MenuFooter from '@/components/MenuFooter';
+import MenuNavigation from '../components/MenuNavigation';
+import MenuFooter from '../components/MenuFooter';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-const MapSection = dynamic(() => import('@/components/MapSection'), { ssr: false });
-const DiscussionSection = dynamic(() => import('@/components/DiscussionSection'), { ssr: false });
+const MapSection = dynamic(() => import('../components/MapSection'), { ssr: false });
+const DiscussionSection = dynamic(() => import('../components/DiscussionSection'), { ssr: false });
 
 export default function Home() {
   const router = useRouter();
