@@ -1,13 +1,33 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useUser, SignInButton, UserButton } from '@clerk/nextjs';
+
+const getUserRoleFromUser = (user) => {
+  if (!user) return 'visitor';
+  
+  const roles = user.publicMetadata?.roles || [];
+  const userRoles = Array.isArray(roles) ? roles : [roles];
+  
+  if (userRoles.includes('admin')) return 'admin';
+  if (userRoles.includes('member')) return 'member';
+  
+  return 'visitor';
+};
 
 export default function MenuNavigation() {
   const [open, setOpen] = useState(false);
   const { isSignedIn, user, isLoaded } = useUser();
+  const [role, setRole] = useState('visitor');
+  
+  useEffect(() => {
+    if (isLoaded && user) {
+      const userRole = getUserRoleFromUser(user);
+      setRole(userRole);
+    }
+  }, [isLoaded, user]);
 
   return (
     <nav className="bg-white w-full border-b border-gray-100 px-4 py-2 flex items-center justify-between"  style={{ background: '#FEF8EA' }}>
@@ -18,6 +38,12 @@ export default function MenuNavigation() {
       <div className="hidden lg:flex gap-8 items-center mr-6">
         <Link href="/" className="hover:underline">Home</Link>
         <Link href="/discussion" className="hover:underline">Discussion</Link>
+        {isSignedIn && (
+          <Link href="/profile" className="hover:underline">My Report</Link>
+        )}
+        {role === 'admin' && (
+          <Link href="/admin" className="hover:underline">Admin</Link>
+        )}
         {!isLoaded ? null : isSignedIn ? (
           <div className="flex items-center gap-2">
             <UserButton showName={true} />
@@ -38,6 +64,12 @@ export default function MenuNavigation() {
         <div className="absolute top-14 right-4 bg-white shadow-lg rounded-lg flex flex-col gap-4 p-4 z-50 lg:hidden">
           <Link href="/" onClick={() => setOpen(false)} className="hover:underline">Home</Link>
           <Link href="/discussion" onClick={() => setOpen(false)} className="hover:underline">Discussion</Link>
+          {isSignedIn && (
+            <Link href="/profile" onClick={() => setOpen(false)} className="hover:underline">My Report</Link>
+          )}
+          {role === 'admin' && (
+            <Link href="/admin" onClick={() => setOpen(false)} className="hover:underline">Admin</Link>
+          )}
           {!isLoaded ? null : isSignedIn ? (
             <div className="flex items-center gap-2">
               <UserButton showName={true} />

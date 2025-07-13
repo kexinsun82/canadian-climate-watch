@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const dbUrl = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPWD}@${process.env.DB_HOST}/${process.env.DB_NAME}?${process.env.DB_OPTIONS || ''}`;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+if (!process.env.DBUSER || !process.env.DBPWD || !process.env.DB_HOST || !process.env.DB_NAME) {
+  throw new Error('Please define DBUSER, DBPWD, DB_HOST, and DB_NAME environment variables inside .env.local');
 }
 
 let cached = global.mongoose;
@@ -22,7 +22,10 @@ async function dbConnect() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    console.log("MongoDB URL:", dbUrl);
+
+    cached.promise = mongoose.connect(dbUrl, opts).then((mongoose) => {
+      console.log('Successfully connected to MongoDB via Mongoose');
       return mongoose;
     });
   }
@@ -31,6 +34,7 @@ async function dbConnect() {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    console.error('MongoDB connection failed:', e.message);
     throw e;
   }
 

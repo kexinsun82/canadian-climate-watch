@@ -3,11 +3,11 @@ import { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { LEVEL_LABELS } from '../../lib/utils';
 
 const LABEL_OPTIONS = [
   'Wildfire', 'Heavy Rain', 'Cherry Blossoms', 'Flood', 'Snow', 'Drought', 'Storm', 'Heatwave', 'Other'
 ];
-const LEVEL_LABELS = ['Nice', 'Low', 'Medium', 'High', 'Extreme'];
 
 function LocationPicker({ value, onChange }) {
   const [position, setPosition] = useState(value);
@@ -73,7 +73,7 @@ export default function ReportPage() {
   const [label, setLabel] = useState('');
   const [customLabel, setCustomLabel] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(1);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -104,7 +104,7 @@ export default function ReportPage() {
         setLabel('');
         setCustomLabel('');
         setShowCustomInput(false);
-        setLevel(0);
+        setLevel(1);
         setNotes('');
       } else {
         setError(data.message || 'Failed to submit');
@@ -177,6 +177,9 @@ export default function ReportPage() {
               onChange={e => setLevel(Number(e.target.value))}
               className="flex-1 accent-[var(--color-primary)]"
             />
+            <span className="text-sm font-medium font-body min-w-[60px] text-center">
+              {LEVEL_LABELS[level]}
+            </span>
           </div>
           <div className="flex justify-between px-2">
             <span className="text-xs font-body">Nice</span>

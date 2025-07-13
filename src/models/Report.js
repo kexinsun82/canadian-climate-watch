@@ -23,8 +23,8 @@ const ReportSchema = new mongoose.Schema({
   level: {
     type: Number,
     required: true,
-    min: 1,
-    max: 5,
+    min: 0,
+    max: 4,
   },
   notes: {
     type: String,
@@ -51,7 +51,6 @@ const ReportSchema = new mongoose.Schema({
   },
 });
 
-// Update the updatedAt field on save
 ReportSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
