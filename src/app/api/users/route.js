@@ -1,16 +1,16 @@
-import { clerkClient } from '@clerk/nextjs';
+import { users } from '@clerk/clerk-sdk-node';
 
 export async function GET() {
   try {
-    const users = await clerkClient.users.getUserList();
+    const userList = await users.getUserList();
     
-    const formattedUsers = users.map(user => ({
+    const formattedUsers = userList.map(user => ({
       id: user.id,
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
       imageUrl: user.imageUrl,
-      primaryEmailAddress: user.emailAddresses.find(email => email.id === user.primaryEmailAddressId),
+      primaryEmailAddress: user.emailAddresses?.find(email => email.id === user.primaryEmailAddressId),
       role: user.publicMetadata?.role || 'member',
       createdAt: user.createdAt
     }));
@@ -20,7 +20,8 @@ export async function GET() {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Failed to fetch users' }), {
+    console.error('Failed to fetch users:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch users', details: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
