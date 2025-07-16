@@ -181,6 +181,7 @@ function ReportsList({ reports, onDelete }) {
   }
 
   return (
+    // All Reports
     <div className="grid grid-cols-1 gap-6">
       {reports.map(report => (
         <div key={report._id} className="bg-white rounded-lg shadow overflow-hidden">
@@ -197,9 +198,8 @@ function ReportsList({ reports, onDelete }) {
                   {new Date(report.createdAt).toLocaleDateString()}
                 </div>
               </div>
-              
-              <h3 className="text-lg font-semibold mb-2">{report.title || 'Untitled Report'}</h3>
-              <p className="text-gray-600 mb-4">{report.notes}</p>
+              <h3 className="text-lg font-semibold mb-2">{report.notes || 'Untitled Report'}</h3>
+              <p className="text-gray-600 mb-4">{report.location.coordinates[0]}, {report.location.coordinates[1]}</p>
               
               <div className="flex items-center">
                 <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
@@ -238,6 +238,7 @@ function UsersList({ users, onDelete, onRoleChange }) {
   }
 
   return (
+    // All Users
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">

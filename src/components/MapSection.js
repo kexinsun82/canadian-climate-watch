@@ -16,6 +16,8 @@ export default function MapSection() {
   const [selected, setSelected] = useState('eccc');
   const [observationMarkers, setObservationMarkers] = useState([]);
   const [nasaMarkers, setNasaMarkers] = useState([]);
+  const [discussionMarkers, setDiscussionMarkers] = useState([]);
+  const [addressCache, setAddressCache] = useState({});
 
   const customIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -134,7 +136,42 @@ export default function MapSection() {
     } else {
       setNasaMarkers([]);
     }
+
+    if (selected === 'discussion') {
+      fetch('/api/reports')
+        .then(res => res.json())
+        .then(async data => {
+          const markers = data.filter(r => r.location && Array.isArray(r.location.coordinates) && r.location.coordinates.length === 2)
+            .map(r => ({
+              ...r,
+              lat: r.location.coordinates[1],
+              lng: r.location.coordinates[0],
+            }));
+          setDiscussionMarkers(markers);
+        })
+        .catch(() => setDiscussionMarkers([]));
+    } else {
+      setDiscussionMarkers([]);
+    }
   }, [selected]);
+
+  async function fetchAddress(lat, lng) {
+    const key = `${lat},${lng}`;
+    if (addressCache[key]) return addressCache[key];
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await res.json();
+      const address = data.address || {};
+      const street = address.road || address.pedestrian || address.cycleway || '';
+      const city = address.city || address.town || address.village || address.hamlet || '';
+      const province = address.state || address.region || '';
+      const result = { street, city, province };
+      setAddressCache(prev => ({ ...prev, [key]: result }));
+      return result;
+    } catch {
+      return { street: '', city: '', province: '' };
+    }
+  }
 
   function FitMapBounds({ markers }) {
     const map = useMap();
@@ -240,10 +277,54 @@ export default function MapSection() {
               ))}
             </MarkerClusterGroup>
           </MapContainer>
+        ) : selected === 'discussion' ? (
+          <MapContainer
+            center={[56.1304, -106.3468]}
+            zoom={4}
+            scrollWheelZoom={true}
+            style={{ height: 400, width: '100%', borderRadius: '1rem' }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            <MarkerClusterGroup>
+              {discussionMarkers.map((marker, idx) => (
+                <Marker key={marker._id || idx} position={[marker.lat, marker.lng]} icon={customIcon}>
+                  <Popup>
+                    <DiscussionPopup marker={marker} fetchAddress={fetchAddress} />
+                  </Popup>
+                </Marker>
+              ))}
+            </MarkerClusterGroup>
+          </MapContainer>
         ) : (
         <span className="text-gray-500">{selected.toUpperCase()} Leaflet Map</span>
         )}
       </div>
     </section>
+  );
+}
+
+function DiscussionPopup({ marker, fetchAddress }) {
+  const [address, setAddress] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchAddress(marker.lat, marker.lng).then(addr => { if (mounted) setAddress(addr); });
+    return () => { mounted = false; };
+  }, [marker.lat, marker.lng]);
+  return (
+    <div>
+      <div><b>{marker.label}</b></div>
+      <div>By: {marker.userName}</div>
+      <div>{marker.notes}</div>
+      <div>{new Date(marker.createdAt).toLocaleString()}</div>
+      {address && (
+        <div style={{ marginTop: 8, fontSize: 13, color: '#555' }}>
+          <div>{address.street}</div>
+          <div>{address.city}, {address.province}</div>
+        </div>
+      )}
+    </div>
   );
 } 
