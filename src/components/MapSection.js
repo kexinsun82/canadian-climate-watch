@@ -73,65 +73,45 @@ export default function MapSection() {
 
     // NASA
     if (selected === 'nasa') {
-      fetch('https://eonet.gsfc.nasa.gov/api/v3/events')
+      fetch('/api/nasa')
         .then(res => res.json())
         .then(data => {
-          console.log("EONET events raw:", data.events);
           const markers = [];
-
           if (Array.isArray(data.events)) {
             data.events.forEach(event => {
-              const title = event.title;
-              const category = event.categories?.[0]?.title || '';
-
-              if (Array.isArray(event.geometries)) {
-                event.geometries.forEach(geo => {
-                  // Point
-                  if (Array.isArray(geo.coordinates) && geo.coordinates.length === 2 && typeof geo.coordinates[0] === 'number') {
-                    const [lng, lat] = geo.coordinates;
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                      markers.push({ lat, lng, title, category, date: geo.date });
-                    }
+              const { title, categories, geometries } = event;
+              const category = categories?.[0]?.title || 'Unknown';
+              geometries?.forEach(geo => {
+                if (!geo || !geo.coordinates) return;
+                const coords = geo.coordinates;
+                // Case 1: [lng, lat] — standard Point
+                if (Array.isArray(coords) && typeof coords[0] === 'number') {
+                  const [lng, lat] = coords;
+                  if (!isNaN(lat) && !isNaN(lng)) {
+                    markers.push({ lat, lng, title, category, date: geo.date });
                   }
-                  // Polygon 或 MultiPoint
-                  else if (Array.isArray(geo.coordinates[0])) {
-                    // Polygon: coordinates[0] 是一组点
-                    if (Array.isArray(geo.coordinates[0][0])) {
-                      // Polygon 或 MultiPolygon
-                      // Polygon: coordinates[0] 是一组点，MultiPolygon: coordinates[0][0] 是一组点
-                      const points = geo.coordinates.flat(2).filter(pt => Array.isArray(pt) && pt.length === 2);
-                      if (points.length > 0) {
-                        // 取所有点的中心
-                        const avg = points.reduce((acc, [lng, lat]) => [acc[0]+lng, acc[1]+lat], [0,0]);
-                        const centerLng = avg[0] / points.length;
-                        const centerLat = avg[1] / points.length;
-                        if (!isNaN(centerLat) && !isNaN(centerLng)) {
-                          markers.push({ lat: centerLat, lng: centerLng, title, category, date: geo.date });
-                        }
-                      }
-                    } else {
-                      // MultiPoint: coordinates 是一组点
-                      geo.coordinates.forEach(pt => {
-                        if (Array.isArray(pt) && pt.length === 2) {
-                          const [lng, lat] = pt;
-                          if (!isNaN(lat) && !isNaN(lng)) {
-                            markers.push({ lat, lng, title, category, date: geo.date });
-                          }
-                        }
-                      });
-                    }
+                }
+                // Case 2: [[lng, lat], ...] or [[[lng, lat], ...]] — Polygon/MultiPolygon
+                else if (Array.isArray(coords) && Array.isArray(coords[0])) {
+                  const points = coords.flat(2).filter(pt => Array.isArray(pt) && pt.length === 2);
+                  if (points.length > 0) {
+                    const [sumLng, sumLat] = points.reduce(
+                      ([lngSum, latSum], [lng, lat]) => [lngSum + lng, latSum + lat],
+                      [0, 0]
+                    );
+                    const avgLng = sumLng / points.length;
+                    const avgLat = sumLat / points.length;
+                    markers.push({ lat: avgLat, lng: avgLng, title, category, date: geo.date });
                   }
-                });
-              }
+                }
+              });
             });
           }
-
-          console.log("NASA markers:", markers);
           setNasaMarkers(markers);
         })
         .catch(error => {
-          console.error("NASA EONET data failed:", error);
           setNasaMarkers([]);
+          console.error("NASA EONET data failed:", error);
         });
     } else {
       setNasaMarkers([]);
@@ -190,9 +170,9 @@ export default function MapSection() {
     <section className="w-full flex flex-col gap-4">
       <div className="flex items-center justify-between bg-[var(--color-primary-light)] rounded-full px-6 py-3">
         <span className="text-lg font-medium font-title">Interactive Map</span>
-        <button className="bg-[var(--color-primary-light)] rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary)] transition font-body">
+        {/* <button className="bg-[var(--color-primary-light)] rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary)] transition font-body">
           Filters
-        </button>
+        </button> */}
       </div>
 
       <div className="flex gap-4 justify-center mt-2">
@@ -270,7 +250,7 @@ export default function MapSection() {
                     <div>
                       <div><b>{marker.title}</b></div>
                       <div>{marker.category}</div>
-                      <div>{new Date(marker.date).toLocaleString()}</div>
+                      <div>{marker.date ? new Date(marker.date).toLocaleString() : ''}</div>
                     </div>
                   </Popup>
                 </Marker>

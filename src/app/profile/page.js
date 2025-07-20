@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState('realtime');
+  const [addressCache, setAddressCache] = useState({});
 
   const filterTabs = [
     { key: 'realtime', label: 'Real-time' },
@@ -69,6 +70,24 @@ export default function ProfilePage() {
     filtered = [...reports].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
+  async function fetchAddress(lat, lng) {
+    const key = `${lat},${lng}`;
+    if (addressCache[key]) return addressCache[key];
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await res.json();
+      const address = data.address || {};
+      const street = address.road || address.pedestrian || address.cycleway || '';
+      const city = address.city || address.town || address.village || address.hamlet || '';
+      const province = address.state || address.region || '';
+      const result = { street, city, province };
+      setAddressCache(prev => ({ ...prev, [key]: result }));
+      return result;
+    } catch {
+      return { street: '', city: '', province: '' };
+    }
+  }
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -118,31 +137,46 @@ export default function ProfilePage() {
         ) : filtered.length === 0 ? (
           <div className="text-center text-gray-500 font-body">No reports found.</div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-2">
             {filtered.map(item => (
-              <div key={item._id || item.id} className="bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <span className="px-3 py-1 rounded-full bg-[var(--color-card)] text-black text-xs font-medium font-body">{getLevelText(item.level)}</span>
-                    <span className="px-3 py-1 rounded-full bg-[var(--color-card)] text-black text-xs font-medium font-body">{item.label}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600 font-body">{new Date(item.createdAt).toLocaleDateString()}</span>
-                    <button
-                      onClick={() => deleteReport(item._id)}
-                      className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-800 font-body">{item.userName}</div>
-                <div className="text-base text-black font-body">{item.notes}</div>
-              </div>
+              <ProfileReportCard key={item._id || item.id} item={item} fetchAddress={fetchAddress} />
             ))}
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ProfileReportCard({ item, fetchAddress }) {
+  const [address, setAddress] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    if (item.location && Array.isArray(item.location.coordinates) && item.location.coordinates.length === 2) {
+      const lat = item.location.coordinates[1];
+      const lng = item.location.coordinates[0];
+      fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
+    }
+    return () => { mounted = false; };
+  }, [item.location]);
+  return (
+    <div className="bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          <span className="px-3 py-1 rounded-full bg-[var(--color-card)] text-black text-xs font-medium font-body">{getLevelText(item.level)}</span>
+          <span className="px-3 py-1 rounded-full bg-[var(--color-card)] text-black text-xs font-medium font-body">{item.label}</span>
+        </div>
+        <span className="text-xs text-gray-600 font-body">{new Date(item.createdAt).toLocaleDateString()}</span>
+      </div>
+      <div className="text-sm text-gray-800 font-body">{item.userName}</div>
+      {address && (
+        <div className="text-xs text-gray-600 font-body">
+          {address.street && <span>{address.street}, </span>}
+          {address.city && <span>{address.city}, </span>}
+          {address.province && <span>{address.province}</span>}
+        </div>
+      )}
+      <div className="text-base text-black font-body">{item.notes}</div>
     </div>
   );
 } 

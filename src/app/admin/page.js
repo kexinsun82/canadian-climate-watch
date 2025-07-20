@@ -172,6 +172,25 @@ export default function AdminPage() {
 }
 
 function ReportsList({ reports, onDelete }) {
+  const [addressCache, setAddressCache] = useState({});
+  // Noninatim API
+  async function fetchAddress(lat, lng) {
+    const key = `${lat},${lng}`;
+    if (addressCache[key]) return addressCache[key];
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await res.json();
+      const address = data.address || {};
+      const street = address.road || address.pedestrian || address.cycleway || '';
+      const city = address.city || address.town || address.village || address.hamlet || '';
+      const province = address.state || address.region || '';
+      const result = { street, city, province };
+      setAddressCache(prev => ({ ...prev, [key]: result }));
+      return result;
+    } catch {
+      return { street: '', city: '', province: '' };
+    }
+  }
   if (reports.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
@@ -179,50 +198,11 @@ function ReportsList({ reports, onDelete }) {
       </div>
     );
   }
-
   return (
     // All Reports
     <div className="grid grid-cols-1 gap-6">
       {reports.map(report => (
-        <div key={report._id} className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-6 flex flex-col md:flex-row">
-            <div className="flex-1">
-              <div className="flex items-center mb-2">
-                <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                  {report.label}
-                </div>
-                <div className={`ml-2 text-xs font-medium px-2.5 py-0.5 rounded ${getLevelColor(report.level)}`}>
-                  {getLevelText(report.level)}
-                </div>
-                <div className="ml-4 text-gray-500 text-sm">
-                  {new Date(report.createdAt).toLocaleDateString()}
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{report.notes || 'Untitled Report'}</h3>
-              <p className="text-gray-600 mb-4">{report.location.coordinates[0]}, {report.location.coordinates[1]}</p>
-              
-              <div className="flex items-center">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-                <div className="ml-4">
-                  <div className="font-medium">{report.userName}</div>
-                  <div className="text-gray-500 text-sm">{report.userEmail}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col justify-center items-center mt-4 md:mt-0 md:ml-4">
-              <button
-                onClick={() => onDelete(report._id)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <AdminReportCard key={report._id} report={report} onDelete={onDelete} fetchAddress={fetchAddress} />
       ))}
     </div>
   );
@@ -264,15 +244,8 @@ function UsersList({ users, onDelete, onRoleChange }) {
           {users.map(user => (
             <tr key={user.id}>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10">
-                    <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt={user.username} />
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
-                    <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
-                  </div>
-                </div>
+                <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
+                <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">{user.primaryEmailAddress.emailAddress}</div>
@@ -302,6 +275,60 @@ function UsersList({ users, onDelete, onRoleChange }) {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function AdminReportCard({ report, onDelete, fetchAddress }) {
+  const [address, setAddress] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    if (report.location && Array.isArray(report.location.coordinates) && report.location.coordinates.length === 2) {
+      const lat = report.location.coordinates[1];
+      const lng = report.location.coordinates[0];
+      fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
+    }
+    return () => { mounted = false; };
+  }, [report.location]);
+  return (
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="p-6 flex flex-col md:flex-row">
+        <div className="flex-1">
+          <div className="flex items-center mb-2">
+            <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+              {report.label}
+            </div>
+            <div className={`ml-2 text-xs font-medium px-2.5 py-0.5 rounded ${getLevelColor(report.level)}`}>
+              {getLevelText(report.level)}
+            </div>
+            <div className="ml-4 text-gray-500 text-sm">
+              {new Date(report.createdAt).toLocaleDateString()}
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">{report.notes || 'Untitled Report'}</h3>
+          {address && (
+            <div className="text-xs text-gray-600 mb-2">
+              {address.street && <span>{address.street}, </span>}
+              {address.city && <span>{address.city}, </span>}
+              {address.province && <span>{address.province}</span>}
+            </div>
+          )}
+          {/* <p className="text-gray-600 mb-4">{report.location.coordinates[0]}, {report.location.coordinates[1]}</p> */}
+          <div className="font-medium">{report.userName}</div>
+          <div className="text-gray-500 text-sm">{report.userEmail}</div>
+        </div>
+        <div className="flex flex-col justify-center items-center mt-4 md:mt-0 md:ml-4">
+          <button
+            onClick={() => onDelete(report._id)}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
