@@ -88,6 +88,11 @@ export default function ProfilePage() {
     }
   }
 
+  useEffect(() => {
+    window.deleteReport = deleteReport;
+    return () => { delete window.deleteReport; };
+  }, [deleteReport]);
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -150,6 +155,14 @@ export default function ProfilePage() {
 
 function ProfileReportCard({ item, fetchAddress }) {
   const [address, setAddress] = useState(null);
+  const { user } = useUser();
+  const canDelete = user && item.userId === user.id;
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this report?')) {
+      const event = new CustomEvent('deleteReport', { detail: item._id });
+      window.dispatchEvent(event);
+    }
+  };
   useEffect(() => {
     let mounted = true;
     if (item.location && Array.isArray(item.location.coordinates) && item.location.coordinates.length === 2) {
@@ -159,6 +172,15 @@ function ProfileReportCard({ item, fetchAddress }) {
     }
     return () => { mounted = false; };
   }, [item.location]);
+  useEffect(() => {
+    const listener = (e) => {
+      if (e.detail === item._id && typeof window.deleteReport === 'function') {
+        window.deleteReport(item._id);
+      }
+    };
+    window.addEventListener('deleteReport', listener);
+    return () => window.removeEventListener('deleteReport', listener);
+  }, [item._id]);
   return (
     <div className="bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
       <div className="flex items-center justify-between">
@@ -168,7 +190,17 @@ function ProfileReportCard({ item, fetchAddress }) {
         </div>
         <span className="text-xs text-gray-600 font-body">{new Date(item.createdAt).toLocaleDateString()}</span>
       </div>
-      <div className="text-sm text-gray-800 font-body">{item.userName}</div>
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-800 font-body">{item.userName}</div>
+        {canDelete && (
+          <button
+            className="ml-4 px-3 py-1 bg-[var(--color-accent)] text-white rounded-full text-xs font-medium hover:bg-[var(--color-primary)] transition"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        )}
+      </div>
       {address && (
         <div className="text-xs text-gray-600 font-body">
           {address.street && <span>{address.street}, </span>}
