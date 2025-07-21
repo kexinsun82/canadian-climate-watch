@@ -79,29 +79,26 @@ export default function MapSection() {
           const markers = [];
           if (Array.isArray(data.events)) {
             data.events.forEach(event => {
-              const { title, categories, geometries } = event;
+              const { title, categories, geometry = [], link, sources = [], description } = event;
               const category = categories?.[0]?.title || 'Unknown';
-              geometries?.forEach(geo => {
+              geometry.forEach((geo, idx) => {
                 if (!geo || !geo.coordinates) return;
                 const coords = geo.coordinates;
-                // Case 1: [lng, lat] — standard Point
                 if (Array.isArray(coords) && typeof coords[0] === 'number') {
                   const [lng, lat] = coords;
                   if (!isNaN(lat) && !isNaN(lng)) {
-                    markers.push({ lat, lng, title, category, date: geo.date });
-                  }
-                }
-                // Case 2: [[lng, lat], ...] or [[[lng, lat], ...]] — Polygon/MultiPolygon
-                else if (Array.isArray(coords) && Array.isArray(coords[0])) {
-                  const points = coords.flat(2).filter(pt => Array.isArray(pt) && pt.length === 2);
-                  if (points.length > 0) {
-                    const [sumLng, sumLat] = points.reduce(
-                      ([lngSum, latSum], [lng, lat]) => [lngSum + lng, latSum + lat],
-                      [0, 0]
-                    );
-                    const avgLng = sumLng / points.length;
-                    const avgLat = sumLat / points.length;
-                    markers.push({ lat: avgLat, lng: avgLng, title, category, date: geo.date });
+                    markers.push({
+                      lat,
+                      lng,
+                      title,
+                      category,
+                      date: geo.date,
+                      magnitude: geo.magnitudeValue,
+                      magnitudeUnit: geo.magnitudeUnit,
+                      link,
+                      source: sources[0]?.url,
+                      description
+                    });
                   }
                 }
               });
@@ -167,7 +164,7 @@ export default function MapSection() {
   }
 
   return (
-    <section className="w-full flex flex-col gap-4">
+    <section className="w-full flex flex-col gap-4 px-4">
       <div className="flex items-center justify-between bg-[var(--color-primary)] rounded-full px-6 py-3">
         <span className="text-lg font-medium font-title">Interactive Map</span>
         {/* <button className="bg-[var(--color-primary-light)] rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary)] transition font-body">
@@ -249,8 +246,12 @@ export default function MapSection() {
                   <Popup>
                     <div>
                       <div><b>{marker.title}</b></div>
-                      <div>{marker.category}</div>
-                      <div>{marker.date ? new Date(marker.date).toLocaleString() : ''}</div>
+                      <div className='text-sm text-[var(--color-accent)]'>{marker.category}</div>
+                      {marker.date && <div>{new Date(marker.date).toLocaleString()}</div>}
+                      {marker.magnitude && <div>Magnitude: {marker.magnitude} {marker.magnitudeUnit || ''}</div>}
+                      {marker.description && <div className="mt-1 text-xs text-gray-600">{marker.description}</div>}
+                      {marker.source && <div><a href={marker.source} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Source</a></div>}
+                      {marker.link && <div><a href={marker.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">API Details</a></div>}
                     </div>
                   </Popup>
                 </Marker>

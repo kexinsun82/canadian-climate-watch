@@ -14,7 +14,7 @@ export default function Home() {
       <main className="flex-1 flex flex-col gap-12 items-center px-4 py-8 max-w-4xl mx-auto w-full">
         <section className="w-full flex flex-col items-center gap-6">
           <h1 className="text-3xl font-medium" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>ClimaTrack Canada</h1>
-          <p className="text-lg text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <p className="text-lg text-center px-4" style={{ fontFamily: 'Poppins, sans-serif' }}>
           Climate Watch Canada is a weather observation-based application designed to empower Canadian residents, community organizers and environmental researchers to monitor and respond to climate change. 
           </p>
           <button

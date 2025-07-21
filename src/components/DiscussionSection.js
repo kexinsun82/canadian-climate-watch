@@ -55,7 +55,7 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
   }
 
   return (
-    <section className="w-full flex flex-col gap-4">
+    <section className="w-full flex flex-col gap-4 px-4">
       {!hideHeader && (
         <div className="flex items-center justify-between bg-[var(--color-primary)] rounded-full px-6 py-3">
           <span className="text-lg font-medium text-black font-title">Discussion</span>

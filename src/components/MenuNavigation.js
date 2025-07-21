@@ -30,12 +30,12 @@ export default function MenuNavigation() {
   }, [isLoaded, user]);
 
   return (
-    <nav className="bg-white w-full border-b border-gray-100 px-4 py-2 flex items-center justify-between"  style={{ background: '#FEF8EA' }}>
-      <div className="flex items-center gap-2 mt-6 ml-6">
+    <nav className="bg-white w-full px-8 py-6 flex items-center justify-between"  style={{ background: '#FEF8EA' }}>
+      <div className="flex items-center gap-2">
         <Image src="/logo.png" alt="logo" width={40} height={40} />
         <span className="font-medium text-lg" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>ClimaTrack Canada</span>
       </div>
-      <div className="hidden lg:flex gap-8 items-center mr-6">
+      <div className="hidden lg:flex gap-8 items-center">
         <Link href="/" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Home</Link>
         <Link href="/discussion" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Discussion</Link>
         {isSignedIn && (

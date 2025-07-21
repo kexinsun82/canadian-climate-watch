@@ -14,7 +14,7 @@ export default function DiscussionPage() {
   const [selected, setSelected] = useState('realtime');
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center px-4 py-8 bg-[var(--color-card)]">
+    <div className="min-h-screen w-full flex flex-col items-center px-8 py-4 bg-[var(--color-card)]">
       <div className="w-full max-w-3xl flex items-center justify-between mb-8">
         <span className="text-2xl font-medium font-title">Discussion</span>
         <button
@@ -24,7 +24,7 @@ export default function DiscussionPage() {
           Report Now
         </button>
       </div>
-      <div className="w-full max-w-3xl flex gap-4 mb-8">
+      <div className="w-full max-w-3xl flex gap-4 mb-4 justify-center">
         {filterTabs.map(tab => (
           <button
             key={tab.key}
