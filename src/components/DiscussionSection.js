@@ -59,7 +59,7 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
       {!hideHeader && (
         <div className="flex items-center justify-between bg-[var(--color-primary)] rounded-full px-6 py-3">
           <span className="text-lg font-medium text-black font-title">Discussion</span>
-          <a href="/discussion" className="bg-[var(--color-white)] text-black rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary-light)] transition font-body">
+          <a href="/discussion" className="bg-[var(--color-card)] text-black rounded-full px-4 py-1 font-medium border hover:bg-[var(--color-primary-light)] transition font-body">
           View More
         </a>
       </div>

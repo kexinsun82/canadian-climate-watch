@@ -36,13 +36,13 @@ export default function MenuNavigation() {
         <span className="font-medium text-lg" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>ClimaTrack Canada</span>
       </div>
       <div className="hidden lg:flex gap-8 items-center mr-6">
-        <Link href="/" className="hover:underline">Home</Link>
-        <Link href="/discussion" className="hover:underline">Discussion</Link>
+        <Link href="/" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Home</Link>
+        <Link href="/discussion" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Discussion</Link>
         {isSignedIn && (
-          <Link href="/profile" className="hover:underline">My Report</Link>
+          <Link href="/profile" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">My Report</Link>
         )}
         {role === 'admin' && (
-          <Link href="/admin" className="hover:underline">Admin</Link>
+          <Link href="/admin" className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Admin</Link>
         )}
         {!isLoaded ? null : isSignedIn ? (
           <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export default function MenuNavigation() {
           </div>
         ) : (
           <SignInButton>
-            <button className="hover:underline">Login</button>
+            <button className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Login</button>
           </SignInButton>
         )}
       </div>
@@ -62,13 +62,13 @@ export default function MenuNavigation() {
       {/* Mobile menu */}
       {open && (
         <div className="absolute top-14 right-4 bg-white shadow-lg rounded-lg flex flex-col gap-4 p-4 z-50 lg:hidden">
-          <Link href="/" onClick={() => setOpen(false)} className="hover:underline">Home</Link>
-          <Link href="/discussion" onClick={() => setOpen(false)} className="hover:underline">Discussion</Link>
+          <Link href="/" onClick={() => setOpen(false)} className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Home</Link>
+          <Link href="/discussion" onClick={() => setOpen(false)} className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Discussion</Link>
           {isSignedIn && (
-            <Link href="/profile" onClick={() => setOpen(false)} className="hover:underline">My Report</Link>
+            <Link href="/profile" onClick={() => setOpen(false)} className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">My Report</Link>
           )}
           {role === 'admin' && (
-            <Link href="/admin" onClick={() => setOpen(false)} className="hover:underline">Admin</Link>
+            <Link href="/admin" onClick={() => setOpen(false)} className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Admin</Link>
           )}
           {!isLoaded ? null : isSignedIn ? (
             <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export default function MenuNavigation() {
             </div>
           ) : (
             <SignInButton>
-              <button className="hover:underline">Login</button>
+              <button className="hover:underline decoration-[--color-accent] decoration-3 underline-offset-8">Login</button>
             </SignInButton>
           )}
         </div>

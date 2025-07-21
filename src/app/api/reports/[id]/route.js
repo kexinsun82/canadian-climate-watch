@@ -23,8 +23,12 @@ export async function DELETE(request, { params }) {
       });
     }
 
-    if (report.userId !== user.id) {
-      return new Response(JSON.stringify({ error: 'Forbidden - You can only delete your own reports' }), {
+    const roles = user.publicMetadata?.roles || [];
+    const userRoles = Array.isArray(roles) ? roles : [roles];
+    const isAdmin = userRoles.includes('admin');
+
+    if (!isAdmin && report.userId !== user.id) {
+      return new Response(JSON.stringify({ error: 'You can only delete your own reports' }), {
         status: 403,
         headers: { 'Content-Type': 'application/json' }
       });

@@ -134,7 +134,7 @@ export default function ReportPage() {
         <span className="text-lg font-medium font-title text-[#222]">Information</span>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className='w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-6 flex flex-col gap-4 mb-8'>
+        <div className='w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-6 flex flex-col gap-4 mb-8 min-w-[320px] sm:min-w-[400px] md:min-w-[760px] lg:min-w-[760px]' style={{ minHeight: 340, minWidth: 400, maxWidth: 760 }}>
           <div className="flex items-center justify-between">
             <span className="text-base font-medium font-title">Label</span>
             <button
@@ -146,7 +146,7 @@ export default function ReportPage() {
             </button>
           </div>
           {!showCustomInput ? (
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 min-w-[360px]">
               {LABEL_OPTIONS.map(opt => (
                 <button
                   key={opt}
@@ -161,7 +161,8 @@ export default function ReportPage() {
             </div>
           ) : (
             <input
-              className="w-full px-4 py-2 rounded-2xl bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
+              className="w-full px-4 py-2 rounded-2xl bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body min-w-[360px]"
+              style={{ minWidth: 360 }}
               placeholder="Enter custom label"
               value={customLabel}
               onChange={e => setCustomLabel(e.target.value)}

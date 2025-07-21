@@ -111,7 +111,7 @@ export default function AdminPage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen px-4 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -129,33 +129,33 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--color-card)]">
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div 
-            className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all ${
-              activeTab === 'reports' ? 'ring-2 ring-blue-500' : ''
+            className={`border rounded-lg shadow p-6 cursor-pointer transition-all ${
+              activeTab === 'reports' ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'
             }`}
             onClick={() => setActiveTab('reports')}
           >
-            <div className="text-gray-600 text-sm font-medium">All Reports</div>
+            <div className="text-black-600 text-sm font-medium">All Reports</div>
             <div className="text-3xl font-bold mt-2">{reports.length}</div>
           </div>
           
           <div 
-            className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all ${
-              activeTab === 'users' ? 'ring-2 ring-blue-500' : ''
+            className={`border rounded-lg shadow p-6 cursor-pointer transition-all ${
+              activeTab === 'users' ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'
             }`}
             onClick={() => setActiveTab('users')}
           >
-            <div className="text-gray-600 text-sm font-medium">All Users</div>
+            <div className="text-black-600 text-sm font-medium">All Users</div>
             <div className="text-3xl font-bold mt-2">{users.length}</div>
           </div>
         </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-accent)]"></div>
           </div>
         ) : activeTab === 'reports' ? (
           <ReportsList reports={reports} onDelete={deleteReport} />
@@ -220,61 +220,108 @@ function UsersList({ users, onDelete, onRoleChange }) {
   return (
     // All Users
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              User
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Email
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Role
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Joined
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {users.map(user => (
-            <tr key={user.id}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
-                <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-900">{user.primaryEmailAddress.emailAddress}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <select
-                  value={user.role || 'member'}
-                  onChange={(e) => onRoleChange(user.id, e.target.value)}
-                  className="border rounded px-2 py-1 text-sm"
-                >
-                  <option value="admin">Admin</option>
-                  <option value="member">Member</option>
-                </select>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {new Date(user.createdAt).toLocaleDateString()}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  onClick={() => onDelete(user.id)}
-                  className="text-red-600 hover:text-red-900"
-                >
-                  Delete
-                </button>
-              </td>
+      {/* Desktop Table */}
+      <div className="hidden md:block">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-[var(--color-primary-light)] text-black">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                User
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Email
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Role
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Joined
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {users.map(user => (
+              <tr key={user.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
+                  <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">{user.primaryEmailAddress.emailAddress}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <select
+                    value={user.role || 'member'}
+                    onChange={(e) => onRoleChange(user.id, e.target.value)}
+                    className="border rounded px-2 py-1 text-sm"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="member">Member</option>
+                  </select>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button
+                    onClick={() => onDelete(user.id)}
+                    className="text-[var(--color-accent)] hover:text-[var(--color-primary)]"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile table */}
+      <div className="md:hidden">
+        <div className="p-4">
+          <div className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 px-2">All Users</div>
+          <div className="space-y-4">
+            {users.map(user => (
+              <div key={user.id} className="border rounded-lg p-4 space-y-3">
+                <div>
+                  <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
+                  <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-500 uppercase mb-1">Email</div>
+                  <div className="text-sm text-gray-900">{user.primaryEmailAddress.emailAddress}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-500 uppercase mb-1">Role</div>
+                  <select
+                    value={user.role || 'member'}
+                    onChange={(e) => onRoleChange(user.id, e.target.value)}
+                    className="border rounded px-2 py-1 text-sm w-full"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="member">Member</option>
+                  </select>
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-500 uppercase mb-1">Joined</div>
+                  <div className="text-sm text-gray-500">{new Date(user.createdAt).toLocaleDateString()}</div>
+                </div>
+                <div>
+                  <button
+                    onClick={() => onDelete(user.id)}
+                    className="text-[var(--color-accent)] hover:text-[var(--color-primary)] text-sm font-medium"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -320,11 +367,8 @@ function AdminReportCard({ report, onDelete, fetchAddress }) {
         <div className="flex flex-col justify-center items-center mt-4 md:mt-0 md:ml-4">
           <button
             onClick={() => onDelete(report._id)}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center"
+            className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-primary)] flex items-center"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
             Delete
           </button>
         </div>

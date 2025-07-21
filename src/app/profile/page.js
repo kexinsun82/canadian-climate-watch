@@ -115,7 +115,7 @@ export default function ProfilePage() {
           className="px-6 py-2 rounded-full bg-[var(--color-accent)] text-[var(--color-white)] text-base font-medium transition hover:opacity-90 font-body"
           onClick={() => router.push('/report')}
         >
-          Create Report
+          Report Now
         </button>
       </div>
       

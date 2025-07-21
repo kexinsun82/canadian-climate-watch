@@ -168,7 +168,7 @@ export default function MapSection() {
 
   return (
     <section className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between bg-[var(--color-primary-light)] rounded-full px-6 py-3">
+      <div className="flex items-center justify-between bg-[var(--color-primary)] rounded-full px-6 py-3">
         <span className="text-lg font-medium font-title">Interactive Map</span>
         {/* <button className="bg-[var(--color-primary-light)] rounded-full px-4 py-1 font-medium border border-[var(--color-primary)] hover:bg-[var(--color-primary)] transition font-body">
           Filters
