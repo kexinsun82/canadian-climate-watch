@@ -1,8 +1,33 @@
 import { users } from '@clerk/clerk-sdk-node';
 import { currentUser } from '@clerk/nextjs/server';
 
+const getUserRoleFromUser = (user) => {
+  if (!user) return 'visitor';
+
+  let roles = user.publicMetadata?.roles;
+  if (roles) {
+    if (typeof roles === 'string') {
+      try {
+        const parsed = JSON.parse(roles);
+        if (Array.isArray(parsed)) roles = parsed;
+        else roles = [roles];
+      } catch {
+        roles = [roles];
+      }
+    }
+    if (Array.isArray(roles) && roles.includes('admin')) return 'admin';
+    if (Array.isArray(roles) && roles.includes('member')) return 'member';
+  }
+
+  const role = user.publicMetadata?.role;
+  if (role === 'admin') return 'admin';
+  if (role === 'member') return 'member';
+
+  return 'visitor';
+};
+
 export async function DELETE(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   
   try {
     const currentUserData = await currentUser();
@@ -13,10 +38,9 @@ export async function DELETE(request, { params }) {
       });
     }
 
-    const roles = currentUserData.publicMetadata?.roles || [];
-    const userRoles = Array.isArray(roles) ? roles : [roles];
+    const userRole = getUserRoleFromUser(currentUserData);
     
-    if (!userRoles.includes('admin')) {
+    if (userRole !== 'admin') {
       return new Response(JSON.stringify({ error: 'Forbidden - Only admins can delete users' }), {
         status: 403,
         headers: { 'Content-Type': 'application/json' }
@@ -38,7 +62,7 @@ export async function DELETE(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   
   try {
     const currentUserData = await currentUser();
@@ -49,10 +73,9 @@ export async function PATCH(request, { params }) {
       });
     }
 
-    const roles = currentUserData.publicMetadata?.roles || [];
-    const userRoles = Array.isArray(roles) ? roles : [roles];
+    const userRole = getUserRoleFromUser(currentUserData);
     
-    if (!userRoles.includes('admin')) {
+    if (userRole !== 'admin') {
       return new Response(JSON.stringify({ error: 'Forbidden - Only admins can update user roles' }), {
         status: 403,
         headers: { 'Content-Type': 'application/json' }
@@ -91,7 +114,7 @@ export async function GET() {
       lastName: user.lastName,
       imageUrl: user.imageUrl,
       primaryEmailAddress: user.emailAddresses.find(email => email.id === user.primaryEmailAddressId),
-      role: user.publicMetadata?.role || 'member',
+      role: getUserRoleFromUser(user),
       createdAt: user.createdAt
     }));
 

@@ -7,13 +7,26 @@ import { useUser, SignInButton, UserButton } from '@clerk/nextjs';
 
 const getUserRoleFromUser = (user) => {
   if (!user) return 'visitor';
-  
-  const roles = user.publicMetadata?.roles || [];
-  const userRoles = Array.isArray(roles) ? roles : [roles];
-  
-  if (userRoles.includes('admin')) return 'admin';
-  if (userRoles.includes('member')) return 'member';
-  
+
+  let roles = user.publicMetadata?.roles;
+  if (roles) {
+    if (typeof roles === 'string') {
+      try {
+        const parsed = JSON.parse(roles);
+        if (Array.isArray(parsed)) roles = parsed;
+        else roles = [roles];
+      } catch {
+        roles = [roles];
+      }
+    }
+    if (Array.isArray(roles) && roles.includes('admin')) return 'admin';
+    if (Array.isArray(roles) && roles.includes('member')) return 'member';
+  }
+
+  const role = user.publicMetadata?.role;
+  if (role === 'admin') return 'admin';
+  if (role === 'member') return 'member';
+
   return 'visitor';
 };
 
@@ -24,6 +37,7 @@ export default function MenuNavigation() {
   
   useEffect(() => {
     if (isLoaded && user) {
+      console.log('user.publicMetadata:', user?.publicMetadata); 
       const userRole = getUserRoleFromUser(user);
       setRole(userRole);
     }
