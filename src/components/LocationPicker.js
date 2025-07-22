@@ -1,9 +1,27 @@
 "use client";
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const LABEL_OPTIONS = [
   'Wildfire', 'Heavy Rain', 'Cherry Blossoms', 'Flood', 'Snow', 'Drought', 'Storm', 'Heatwave', 'Other'
 ];
+
+function LocationMarker({ useMapEvents, L, Marker, position, setPosition, onChange, markerRef }) {
+  const mapEvents = (useMapEvents || (() => () => {}))({
+    click(e) {
+      setPosition(e.latlng);
+      onChange(e.latlng);
+    }
+  });
+
+  if (!useMapEvents || !L || !Marker) return null;
+  return position ? (
+    <Marker position={position} ref={markerRef} icon={L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    })} />
+  ) : null;
+}
 
 export default function LocationPicker({ value, onChange }) {
   const [position, setPosition] = useState(value);
@@ -16,7 +34,7 @@ export default function LocationPicker({ value, onChange }) {
   const [useMapEvents, setUseMapEvents] = useState(null);
   const [L, setL] = useState(null);
 
-  useState(() => {
+  useEffect(() => {
     Promise.all([
       import('react-leaflet'),
       import('leaflet'),
@@ -30,23 +48,6 @@ export default function LocationPicker({ value, onChange }) {
       setLeafletLoaded(true);
     });
   }, []);
-
-  function LocationMarker() {
-    if (!useMapEvents || !L) return null;
-    const MapEvents = useMapEvents({
-      click(e) {
-        setPosition(e.latlng);
-        onChange(e.latlng);
-      }
-    });
-    return position && Marker && L ? (
-      <Marker position={position} ref={markerRef} icon={L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      })} />
-    ) : null;
-  }
 
   const handleLocate = () => {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
@@ -75,7 +76,7 @@ export default function LocationPicker({ value, onChange }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
-        <LocationMarker />
+        <LocationMarker useMapEvents={useMapEvents} L={L} Marker={Marker} position={position} setPosition={setPosition} onChange={onChange} markerRef={markerRef} />
       </MapContainer>
       <button
         className="mt-2 px-4 py-2 bg-[var(--color-primary)] text-black rounded-full font-medium w-max"

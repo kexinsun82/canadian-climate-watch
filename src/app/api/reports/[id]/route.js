@@ -4,7 +4,7 @@ import { currentUser } from '@clerk/nextjs/server';
 
 export async function DELETE(request, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { id } = await params;
   
   try {
     const user = await currentUser();

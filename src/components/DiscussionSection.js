@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getLevelText, getLevelColor } from '../lib/utils';
 
 export default function DiscussionSection({ filter = 'realtime', hideHeader = false }) {
@@ -36,7 +36,7 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
     filtered = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  async function fetchAddress(lat, lng) {
+  const fetchAddress = useCallback(async (lat, lng) => {
     const key = `${lat},${lng}`;
     if (addressCache[key]) return addressCache[key];
     try {
@@ -52,7 +52,7 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
     } catch {
       return { street: '', city: '', province: '' };
     }
-  }
+  }, [addressCache]);
 
   return (
     <section className="w-full flex flex-col gap-4 px-4">
@@ -89,7 +89,7 @@ function DiscussionCard({ item, fetchAddress }) {
       fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
     }
     return () => { mounted = false; };
-  }, [item.location]);
+  }, [item.location, fetchAddress]);
   return (
     <div className="bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
       <div className="flex items-center justify-between">

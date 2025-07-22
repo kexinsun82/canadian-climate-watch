@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { getLevelText, getLevelColor } from '../../lib/utils';
 
@@ -18,13 +18,7 @@ export default function ProfilePage() {
     { key: 'extreme', label: 'Extreme' },
   ];
 
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchUserReports();
-    }
-  }, [isLoaded, user]);
-
-  const fetchUserReports = async () => {
+  const fetchUserReports = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/reports');
@@ -38,22 +32,28 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const deleteReport = async (reportId) => {
+  useEffect(() => {
+    if (isLoaded && user) {
+      fetchUserReports();
+    }
+  }, [isLoaded, user, fetchUserReports]);
+
+  const deleteReport = useCallback(async (reportId) => {
     try {
       const response = await fetch(`/api/reports/${reportId}`, {
         method: 'DELETE',
       });
       if (response.ok) {
-        setReports(reports.filter(report => report._id !== reportId));
+        setReports(reports => reports.filter(report => report._id !== reportId));
       } else {
         console.error('Failed to delete report');
       }
     } catch (error) {
       console.error('Failed to delete report:', error);
     }
-  };
+  }, []);
 
   let filtered = reports;
   if (selected === 'nice') {
@@ -70,7 +70,7 @@ export default function ProfilePage() {
     filtered = [...reports].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  async function fetchAddress(lat, lng) {
+  const fetchAddress = useCallback(async (lat, lng) => {
     const key = `${lat},${lng}`;
     if (addressCache[key]) return addressCache[key];
     try {
@@ -86,7 +86,7 @@ export default function ProfilePage() {
     } catch {
       return { street: '', city: '', province: '' };
     }
-  }
+  }, [addressCache]);
 
   useEffect(() => {
     window.deleteReport = deleteReport;
@@ -171,7 +171,7 @@ function ProfileReportCard({ item, fetchAddress }) {
       fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
     }
     return () => { mounted = false; };
-  }, [item.location]);
+  }, [item.location, fetchAddress]);
   useEffect(() => {
     const listener = (e) => {
       if (e.detail === item._id && typeof window.deleteReport === 'function') {

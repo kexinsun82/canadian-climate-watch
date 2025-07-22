@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -29,6 +29,24 @@ export default function MapSection() {
     iconSize: [25, 41],
     iconAnchor: [12, 41],
   });
+
+  const fetchAddress = useCallback(async (lat, lng) => {
+    const key = `${lat},${lng}`;
+    if (addressCache[key]) return addressCache[key];
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await res.json();
+      const address = data.address || {};
+      const street = address.road || address.pedestrian || address.cycleway || '';
+      const city = address.city || address.town || address.village || address.hamlet || '';
+      const province = address.state || address.region || '';
+      const result = { street, city, province };
+      setAddressCache(prev => ({ ...prev, [key]: result }));
+      return result;
+    } catch {
+      return { street: '', city: '', province: '' };
+    }
+  }, [addressCache]);
 
   useEffect(() => {
     // ECCC
@@ -135,25 +153,7 @@ export default function MapSection() {
     } else {
       setDiscussionMarkers([]);
     }
-  }, [selected]);
-
-  async function fetchAddress(lat, lng) {
-    const key = `${lat},${lng}`;
-    if (addressCache[key]) return addressCache[key];
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      const data = await res.json();
-      const address = data.address || {};
-      const street = address.road || address.pedestrian || address.cycleway || '';
-      const city = address.city || address.town || address.village || address.hamlet || '';
-      const province = address.state || address.region || '';
-      const result = { street, city, province };
-      setAddressCache(prev => ({ ...prev, [key]: result }));
-      return result;
-    } catch {
-      return { street: '', city: '', province: '' };
-    }
-  }
+  }, [selected, fetchAddress]);
 
   function FitMapBounds({ markers }) {
     const map = useMap();
@@ -298,7 +298,7 @@ function DiscussionPopup({ marker, fetchAddress }) {
     let mounted = true;
     fetchAddress(marker.lat, marker.lng).then(addr => { if (mounted) setAddress(addr); });
     return () => { mounted = false; };
-  }, [marker.lat, marker.lng]);
+  }, [marker.lat, marker.lng, fetchAddress]);
   return (
     <div>
       <div><b>{marker.label}</b></div>

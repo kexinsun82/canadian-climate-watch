@@ -336,7 +336,7 @@ function AdminReportCard({ report, onDelete, fetchAddress }) {
       fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
     }
     return () => { mounted = false; };
-  }, [report.location]);
+  }, [report.location, fetchAddress]);
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="p-6 flex flex-col md:flex-row">
