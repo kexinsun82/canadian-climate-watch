@@ -1,77 +1,9 @@
 "use client";
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import { LEVEL_LABELS } from '../../lib/utils';
 
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const useMapEvents = dynamic(() => import('react-leaflet').then(mod => mod.useMapEvents), { ssr: false });
-
-const LABEL_OPTIONS = [
-  'Wildfire', 'Heavy Rain', 'Cherry Blossoms', 'Flood', 'Snow', 'Drought', 'Storm', 'Heatwave', 'Other'
-];
-
-function LocationPicker({ value, onChange }) {
-  const [position, setPosition] = useState(value);
-  const markerRef = useRef(null);
-
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        setPosition(e.latlng);
-        onChange(e.latlng);
-      }
-    });
-    return position ? (
-      <Marker position={position} ref={markerRef} icon={L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      })} />
-    ) : null;
-  }
-
-  const handleLocate = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const latlng = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        };
-        setPosition(latlng);
-        onChange(latlng);
-      });
-    }
-  };
-
-  return (
-    <div className="w-full flex flex-col gap-2 items-center">
-      <MapContainer
-        center={position || [49.25, -85.32]}
-        zoom={position ? 10 : 4}
-        style={{ height: 260, width: '100%', borderRadius: 16 }}
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
-        />
-        <LocationMarker />
-      </MapContainer>
-      <button
-        className="mt-2 px-4 py-2 bg-[var(--color-primary)] text-black rounded-full font-medium w-max"
-        style={{ fontFamily: 'Poppins, sans-serif' }}
-        onClick={handleLocate}
-        type="button"
-      >
-        Use Current Location
-      </button>
-    </div>
-  );
-}
+const LocationPicker = dynamic(() => import('../../components/LocationPicker'), { ssr: false });
 
 export default function ReportPage() {
   const [location, setLocation] = useState(null);
@@ -152,7 +84,7 @@ export default function ReportPage() {
           </div>
           {!showCustomInput ? (
             <div className="flex flex-wrap gap-3 min-w-[360px]">
-              {LABEL_OPTIONS.map(opt => (
+              {['Wildfire', 'Heavy Rain', 'Cherry Blossoms', 'Flood', 'Snow', 'Drought', 'Storm', 'Heatwave', 'Other'].map(opt => (
                 <button
                   key={opt}
                   type="button"
