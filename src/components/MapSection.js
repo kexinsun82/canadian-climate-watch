@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useMap, useMapEvents } from 'react-leaflet'; 
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 
 const mapTabs = [
@@ -154,7 +159,7 @@ export default function MapSection() {
     const map = useMap();
 
     useEffect(() => {
-      if (markers.length > 0) {
+      if (markers.length > 0 && map && map.fitBounds) {
         const bounds = L.latLngBounds(markers.map(m => [m.lat, m.lng]));
         map.fitBounds(bounds, { padding: [50, 50] });
       }
