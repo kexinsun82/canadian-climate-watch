@@ -37,7 +37,6 @@ export default function MenuNavigation() {
   
   useEffect(() => {
     if (isLoaded && user) {
-      console.log('user.publicMetadata:', user?.publicMetadata); 
       const userRole = getUserRoleFromUser(user);
       setRole(userRole);
     }

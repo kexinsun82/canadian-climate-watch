@@ -1,11 +1,41 @@
 "use client";
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getLevelText, getLevelColor } from '../lib/utils';
+
+function useReverseGeocode() {
+  const cacheRef = useRef({});
+  const timerRef = useRef({});
+
+  const getAddress = useCallback((lat, lng, cb) => {
+    const key = `${lat},${lng}`;
+    if (cacheRef.current[key]) {
+      cb(cacheRef.current[key]);
+      return;
+    }
+    if (timerRef.current[key]) clearTimeout(timerRef.current[key]);
+    timerRef.current[key] = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/nominatim?lat=${lat}&lon=${lng}`);
+        const data = await res.json();
+        const address = data.address || {};
+        const street = address.road || address.pedestrian || address.cycleway || '';
+        const city = address.city || address.town || address.village || address.hamlet || '';
+        const province = address.state || address.region || '';
+        const result = { street, city, province };
+        cacheRef.current[key] = result;
+        cb(result);
+      } catch {
+        cb({ street: '', city: '', province: '' });
+      }
+    }, 500);
+  }, []);
+  return getAddress;
+}
 
 export default function DiscussionSection({ filter = 'realtime', hideHeader = false }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [addressCache, setAddressCache] = useState({});
+  const getAddress = useReverseGeocode();
 
   useEffect(() => {
     setLoading(true);
@@ -36,24 +66,6 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
     filtered = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  const fetchAddress = useCallback(async (lat, lng) => {
-    const key = `${lat},${lng}`;
-    if (addressCache[key]) return addressCache[key];
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      const data = await res.json();
-      const address = data.address || {};
-      const street = address.road || address.pedestrian || address.cycleway || '';
-      const city = address.city || address.town || address.village || address.hamlet || '';
-      const province = address.state || address.region || '';
-      const result = { street, city, province };
-      setAddressCache(prev => ({ ...prev, [key]: result }));
-      return result;
-    } catch {
-      return { street: '', city: '', province: '' };
-    }
-  }, [addressCache]);
-
   return (
     <section className="w-full flex flex-col gap-4 px-4">
       {!hideHeader && (
@@ -71,7 +83,7 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
           <div className="text-center text-gray-500 font-body">No reports found.</div>
         ) : (
           filtered.map(item => (
-            <DiscussionCard key={item._id || item.id} item={item} fetchAddress={fetchAddress} />
+            <DiscussionCard key={item._id || item.id} item={item} getAddress={getAddress} />
           ))
         )}
       </div>
@@ -79,17 +91,17 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
   );
 }
 
-function DiscussionCard({ item, fetchAddress }) {
+function DiscussionCard({ item, getAddress }) {
   const [address, setAddress] = useState(null);
   useEffect(() => {
     let mounted = true;
     if (item.location && Array.isArray(item.location.coordinates) && item.location.coordinates.length === 2) {
       const lat = item.location.coordinates[1];
       const lng = item.location.coordinates[0];
-      fetchAddress(lat, lng).then(addr => { if (mounted) setAddress(addr); });
+      getAddress(lat, lng, addr => { if (mounted) setAddress(addr); });
     }
     return () => { mounted = false; };
-  }, [item.location, fetchAddress]);
+  }, [item.location, getAddress]);
   return (
     <div className="bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
       <div className="flex items-center justify-between">

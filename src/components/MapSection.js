@@ -17,36 +17,48 @@ const mapTabs = [
   { key: 'discussion', label: 'Discussion' },
 ];
 
+function useReverseGeocode() {
+  const cacheRef = useRef({});
+  const timerRef = useRef({});
+
+  const getAddress = useCallback((lat, lng, cb) => {
+    const key = `${lat},${lng}`;
+    if (cacheRef.current[key]) {
+      cb(cacheRef.current[key]);
+      return;
+    }
+    if (timerRef.current[key]) clearTimeout(timerRef.current[key]);
+    timerRef.current[key] = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/nominatim?lat=${lat}&lon=${lng}`);
+        const data = await res.json();
+        const address = data.address || {};
+        const street = address.road || address.pedestrian || address.cycleway || '';
+        const city = address.city || address.town || address.village || address.hamlet || '';
+        const province = address.state || address.region || '';
+        const result = { street, city, province };
+        cacheRef.current[key] = result;
+        cb(result);
+      } catch {
+        cb({ street: '', city: '', province: '' });
+      }
+    }, 500);
+  }, []);
+  return getAddress;
+}
+
 export default function MapSection() {
   const [selected, setSelected] = useState('eccc');
   const [observationMarkers, setObservationMarkers] = useState([]);
   const [nasaMarkers, setNasaMarkers] = useState([]);
   const [discussionMarkers, setDiscussionMarkers] = useState([]);
-  const [addressCache, setAddressCache] = useState({});
+  const getAddress = useReverseGeocode();
 
   const customIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
   });
-
-  const fetchAddress = useCallback(async (lat, lng) => {
-    const key = `${lat},${lng}`;
-    if (addressCache[key]) return addressCache[key];
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      const data = await res.json();
-      const address = data.address || {};
-      const street = address.road || address.pedestrian || address.cycleway || '';
-      const city = address.city || address.town || address.village || address.hamlet || '';
-      const province = address.state || address.region || '';
-      const result = { street, city, province };
-      setAddressCache(prev => ({ ...prev, [key]: result }));
-      return result;
-    } catch {
-      return { street: '', city: '', province: '' };
-    }
-  }, [addressCache]);
 
   useEffect(() => {
     // ECCC
@@ -153,7 +165,7 @@ export default function MapSection() {
     } else {
       setDiscussionMarkers([]);
     }
-  }, [selected, fetchAddress]);
+  }, [selected]);
 
   function FitMapBounds({ markers }) {
     const map = useMap();
@@ -278,7 +290,7 @@ export default function MapSection() {
               {discussionMarkers.map((marker, idx) => (
                 <Marker key={marker._id || idx} position={[marker.lat, marker.lng]} icon={customIcon}>
                   <Popup>
-                    <DiscussionPopup marker={marker} fetchAddress={fetchAddress} />
+                    <DiscussionPopup marker={marker} getAddress={getAddress} />
                   </Popup>
                 </Marker>
               ))}
@@ -292,13 +304,13 @@ export default function MapSection() {
   );
 }
 
-function DiscussionPopup({ marker, fetchAddress }) {
+function DiscussionPopup({ marker, getAddress }) {
   const [address, setAddress] = useState(null);
   useEffect(() => {
     let mounted = true;
-    fetchAddress(marker.lat, marker.lng).then(addr => { if (mounted) setAddress(addr); });
+    getAddress(marker.lat, marker.lng, addr => { if (mounted) setAddress(addr); });
     return () => { mounted = false; };
-  }, [marker.lat, marker.lng, fetchAddress]);
+  }, [marker.lat, marker.lng, getAddress]);
   return (
     <div>
       <div><b>{marker.label}</b></div>
