@@ -194,7 +194,7 @@ function ProfileReportCard({ item, fetchAddress }) {
         <div className="text-sm text-gray-800 font-body">{item.userName}</div>
         {canDelete && (
           <button
-            className="ml-4 px-3 py-1 bg-[var(--color-accent)] text-white rounded-full text-xs font-medium hover:bg-[var(--color-primary)] transition"
+            className="ml-4 px-3 py-1 bg-[var(--color-accent)] text-white rounded-full text-sm font-medium hover:bg-[var(--color-primary)] transition"
             onClick={handleDelete}
           >
             Delete

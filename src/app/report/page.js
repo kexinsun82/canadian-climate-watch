@@ -71,7 +71,7 @@ export default function ReportPage() {
         <span className="text-lg font-medium font-title text-[#222]">Information</span>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className='w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-6 flex flex-col gap-4 mb-8 min-w-[320px] sm:min-w-[400px] md:min-w-[760px] lg:min-w-[760px]' style={{ minHeight: 340, minWidth: 400, maxWidth: 760 }}>
+        <div className='w-full max-w-3xl bg-[var(--color-primary-light)] rounded-2xl p-4 flex flex-col gap-4 mb-8 min-w-[390px] sm:min-w-[410px] md:min-w-[770px] lg:min-w-[770px]'>
           <div className="flex items-center justify-between">
             <span className="text-base font-medium font-title">Label</span>
             <button
@@ -98,8 +98,8 @@ export default function ReportPage() {
             </div>
           ) : (
             <input
-              className="w-full px-4 py-2 rounded-2xl bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body min-w-[360px]"
-              style={{ minWidth: 360 }}
+              className="w-full px-4 py-2 rounded-2xl bg-[var(--color-card)] text-black font-medium text-sm outline-none font-body"
+              style={{ minWidth: '100%', maxWidth: '100%' }}
               placeholder="Enter custom label"
               value={customLabel}
               onChange={e => setCustomLabel(e.target.value)}
@@ -115,9 +115,6 @@ export default function ReportPage() {
               onChange={e => setLevel(Number(e.target.value))}
               className="flex-1 accent-[var(--color-primary)]"
             />
-            <span className="text-sm font-medium font-body min-w-[60px] text-center">
-              {LEVEL_LABELS[level]}
-            </span>
           </div>
           <div className="flex justify-between px-2">
             <span className="text-xs font-body">Nice</span>
@@ -134,7 +131,7 @@ export default function ReportPage() {
             onChange={e => setNotes(e.target.value)}
           />
         </div>
-        <div className="relative flex justify-center mt-2">
+        <div className="w-full max-w-3xl relative flex justify-center mt-2">
           <div className="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-primary)]" 
               style={{ minWidth: 32, minHeight: 32 }}>
             <span className="text-lg font-medium text-black font-title">3</span>

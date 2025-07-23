@@ -147,7 +147,7 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div 
-            className={`border rounded-lg shadow p-6 cursor-pointer transition-all ${
+            className={`border rounded-lg p-6 cursor-pointer transition-all ${
               activeTab === 'reports' ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'
             }`}
             onClick={() => setActiveTab('reports')}
@@ -157,7 +157,7 @@ export default function AdminPage() {
           </div>
           
           <div 
-            className={`border rounded-lg shadow p-6 cursor-pointer transition-all ${
+            className={`border rounded-lg p-6 cursor-pointer transition-all ${
               activeTab === 'users' ? 'bg-[var(--color-primary)] text-black' : 'bg-transparent text-black hover:bg-[var(--color-primary-light)]'
             }`}
             onClick={() => setActiveTab('users')}
@@ -169,7 +169,7 @@ export default function AdminPage() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-accent)]"></div>
+            <div className="rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-accent)]"></div>
           </div>
         ) : activeTab === 'reports' ? (
           <ReportsList reports={reports} onDelete={deleteReport} />
@@ -207,7 +207,7 @@ function ReportsList({ reports, onDelete }) {
   }
   if (reports.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 text-center">
+      <div className="bg-white rounded-lg p-8 text-center">
         <p className="text-gray-500">No reports found</p>
       </div>
     );
@@ -225,7 +225,7 @@ function ReportsList({ reports, onDelete }) {
 function UsersList({ users, onDelete, onRoleChange }) {
   if (users.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 text-center">
+      <div className="bg-white rounded-lg p-8 text-center">
         <p className="text-gray-500">No users found</p>
       </div>
     );
@@ -233,7 +233,7 @@ function UsersList({ users, onDelete, onRoleChange }) {
 
   return (
     // All Users
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white rounded-lg overflow-hidden">
       {/* Desktop Table */}
       <div className="hidden md:block">
         <table className="min-w-full divide-y divide-gray-200">
@@ -260,11 +260,11 @@ function UsersList({ users, onDelete, onRoleChange }) {
             {users.map(user => (
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
+                  <div className="text-sm font-medium">{user.username || 'No username'}</div>
                   <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{user.primaryEmailAddress.emailAddress}</div>
+                  <div className="text-sm">{user.primaryEmailAddress.emailAddress}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
@@ -276,13 +276,13 @@ function UsersList({ users, onDelete, onRoleChange }) {
                     <option value="member">Member</option>
                   </select>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={() => onDelete(user.id)}
-                    className="text-[var(--color-accent)] hover:text-[var(--color-primary)]"
+                    className="bg-[var(--color-accent)] hover:bg-[var(--color-primary)] text-sm font-medium rounded-full px-3 py-1 text-white"
                   >
                     Delete
                   </button>
@@ -296,12 +296,13 @@ function UsersList({ users, onDelete, onRoleChange }) {
       {/* Mobile table */}
       <div className="md:hidden">
         <div className="p-4">
-          <div className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 px-2">All Users</div>
+          <div className="text-sm font-medium uppercase tracking-wider mb-4 px-2">All Users</div>
           <div className="space-y-4">
             {users.map(user => (
               <div key={user.id} className="border rounded-lg p-4 space-y-3">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">{user.username || 'No username'}</div>
+                  <div className="text-xs font-medium text-gray-500 uppercase mb-1">Username/Name</div>
+                  <div className="text-sm font-medium">{user.username || 'No username'}</div>
                   <div className="text-sm text-gray-500">{user.firstName} {user.lastName}</div>
                 </div>
                 <div>
@@ -321,12 +322,12 @@ function UsersList({ users, onDelete, onRoleChange }) {
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500 uppercase mb-1">Joined</div>
-                  <div className="text-sm text-gray-500">{new Date(user.createdAt).toLocaleDateString()}</div>
+                  <div className="text-sm">{new Date(user.createdAt).toLocaleDateString()}</div>
                 </div>
                 <div>
                   <button
                     onClick={() => onDelete(user.id)}
-                    className="text-[var(--color-accent)] hover:text-[var(--color-primary)] text-sm font-medium"
+                    className="bg-[var(--color-accent)] hover:bg-[var(--color-primary)] text-sm font-medium rounded-full px-3 py-1 text-white"
                   >
                     Delete
                   </button>
@@ -352,7 +353,7 @@ function AdminReportCard({ report, onDelete, fetchAddress }) {
     return () => { mounted = false; };
   }, [report.location, fetchAddress]);
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white border border-black rounded-lg overflow-hidden">
       <div className="p-6 flex flex-col md:flex-row">
         <div className="flex-1">
           <div className="flex items-center mb-2">
@@ -381,7 +382,7 @@ function AdminReportCard({ report, onDelete, fetchAddress }) {
         <div className="flex flex-col justify-center items-center mt-4 md:mt-0 md:ml-4">
           <button
             onClick={() => onDelete(report._id)}
-            className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-primary)] flex items-center"
+            className="px-3 py-1 bg-[var(--color-accent)] text-white rounded-full text-sm font-medium hover:bg-[var(--color-primary)] flex items-center"
           >
             Delete
           </button>
