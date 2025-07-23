@@ -13,12 +13,12 @@ export default function Home() {
     <div className="min-h-screen flex flex-col" style={{ background: '#FEF8EA' }}>
       <main className="flex-1 flex flex-col gap-12 items-center px-4 py-8 max-w-4xl mx-auto w-full">
         <section className="w-full flex flex-col items-center gap-6">
-          <h1 className="text-3xl font-medium" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>ClimaTrack Canada</h1>
+          <h1 className="text-3xl font-medium" style={{ fontFamily: 'Rethink Sans, sans-serif' }}>Welcome to ClimaTrack Canada</h1>
           <p className="text-lg text-center px-4" style={{ fontFamily: 'Poppins, sans-serif' }}>
-          Climate Watch Canada is a weather observation-based application designed to empower Canadian residents, community organizers and environmental researchers to monitor and respond to climate change. 
+          ClimaTrack Canada is a real-time climate reporting platform that combines official data from <b>ECCC</b> and <b>NASA</b> with <b>Community-driven observations</b>. Track wildfires, floods, and seasonal changes near you. "Report Now" to share what you see. 
           </p>
           <button
-            className="mt-4 px-8 py-3 rounded-full bg-[#D40808] text-[#FFFFFE] text-lg font-medium transition hover:opacity-90"
+            className="px-8 py-3 rounded-full bg-[var(--color-accent)] text-white text-lg font-medium hover:bg-[var(--color-primary)] transition"
             style={{ fontFamily: 'Poppins, sans-serif' }}
             onClick={() => router.push('/report')}
           >
