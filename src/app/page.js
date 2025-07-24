@@ -26,7 +26,7 @@ export default function Home() {
           </button>
         </section>
         <MapSection />
-        <DiscussionSection />
+        <DiscussionSection filter="realtime" limit={1} />
       </main>
     </div>
   );

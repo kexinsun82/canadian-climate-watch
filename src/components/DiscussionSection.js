@@ -32,7 +32,7 @@ function useReverseGeocode() {
   return getAddress;
 }
 
-export default function DiscussionSection({ filter = 'realtime', hideHeader = false }) {
+export default function DiscussionSection({ filter = 'realtime', hideHeader = false, limit }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const getAddress = useReverseGeocode();
@@ -64,6 +64,10 @@ export default function DiscussionSection({ filter = 'realtime', hideHeader = fa
     });
   } else if (filter === 'realtime') {
     filtered = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  if (typeof limit === 'number' && limit > 0) {
+    filtered = filtered.slice(0, limit);
   }
 
   return (
