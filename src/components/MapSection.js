@@ -262,13 +262,13 @@ export default function MapSection() {
                 <Marker key={idx} position={[marker.lat, marker.lng]} icon={customIcon}>
                   <Popup>
                     <div>
-                      <div><b>{marker.title}</b></div>
-                      <div className='text-sm text-[var(--color-accent)]'>{marker.category}</div>
-                      {marker.date && <div>{new Date(marker.date).toLocaleString()}</div>}
-                      {marker.magnitude && <div>Magnitude: {marker.magnitude} {marker.magnitudeUnit || ''}</div>}
-                      {marker.description && <div className="mt-1 text-xs text-gray-600">{marker.description}</div>}
-                      {marker.source && <div><a href={marker.source} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Source</a></div>}
-                      {marker.link && <div><a href={marker.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">API Details</a></div>}
+                      <div className='text-lg text-[var(--color-accent)]'><b>{marker.category}</b></div>
+                      <div className='text-sm mt-2'>Title: {marker.title}</div>
+                      {marker.description && <div className="text-sm mt-2">{marker.description}</div>}
+                      {marker.source && <div className='text-xs'><a href={marker.source} target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">Source</a></div>}
+                      {marker.link && <div className='text-xs'><a href={marker.link} target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">API Details</a></div>}
+                      {marker.date && <div className='text-xs mt-2'>Date: {new Date(marker.date).toLocaleString()}</div>}
+                      {marker.magnitude && <div className='text-xs'>Magnitude: {marker.magnitude} {marker.magnitudeUnit || ''}</div>}
                     </div>
                   </Popup>
                 </Marker>
@@ -313,16 +313,16 @@ function DiscussionPopup({ marker, getAddress }) {
   }, [marker.lat, marker.lng, getAddress]);
   return (
     <div>
-      <div><b>{marker.label}</b></div>
-      <div>By: {marker.userName}</div>
-      <div>{marker.notes}</div>
-      <div>{new Date(marker.createdAt).toLocaleString()}</div>
+      <div><b className='text-lg text-[var(--color-accent)]'>{marker.label}</b></div>
+      <div className='text-sm mt-2'>{marker.notes}</div>
+      <div className='text-xs mt-2'>{new Date(marker.createdAt).toLocaleString()}</div>
       {address && (
-        <div style={{ marginTop: 8, fontSize: 13, color: '#555' }}>
-          <div>{address.street}</div>
-          <div>{address.city}, {address.province}</div>
+        <div>
+          <div className='text-xs'>{address.street}</div>
+          <div className='text-xs'>{address.city}, {address.province}</div>
         </div>
       )}
+      <div className='text-xs'>By: {marker.userName}</div>
     </div>
   );
 } 
