@@ -23,9 +23,8 @@ export async function DELETE(request, { params }) {
       });
     }
 
-    const roles = user.publicMetadata?.roles || [];
-    const userRoles = Array.isArray(roles) ? roles : [roles];
-    const isAdmin = userRoles.includes('admin');
+    const role = user.publicMetadata?.role;
+    const isAdmin = role === 'admin';
 
     if (!isAdmin && report.userId !== user.id) {
       return new Response(JSON.stringify({ error: 'You can only delete your own reports' }), {
